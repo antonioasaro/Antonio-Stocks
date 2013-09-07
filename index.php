@@ -2,7 +2,26 @@
 
 $stock = "AMD";
 //Obtain Quote Info
-$quote = file_get_contents('http://dev.markitondemand.com/Api/Quote/json?symbol='.$stock);
+//$quote = file_get_contents('http://dev.markitondemand.com/Api/Quote/json?symbol='.$stock);
+
+//or with curl
+$quote = curl_get('http://dev.markitondemand.com/Api/Quote/json?symbol='.$stock);
+
+function curl_get($url){
+    if (!function_exists('curl_init')){
+        die('Sorry cURL is not installed!');
+    }
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_REFERER, $url);
+    curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/1.0");
+    curl_setopt($ch, CURLOPT_HEADER, 0);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+    $output = curl_exec($ch);
+    curl_close($ch);
+    return $output;
+}
 
 //decode JSON data
 $json_output = json_decode(utf8_decode($quote));
