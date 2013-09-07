@@ -39,7 +39,7 @@ PBL_APP_INFO(HTTP_UUID,
              RESOURCE_ID_WATCH_MENU_ICON,
              APP_INFO_WATCH_FACE);   // Based off of "pbl-index" by "Edward Patel"
 
-#define NUM_LINES 1
+#define NUM_LINES 5
 #define COLUMN2_WIDTH 65
 
 // #error Set values below, should be different, one unique for each request
@@ -77,17 +77,23 @@ void failed(int32_t cookie, int http_status, void *ctx) {
 }
 
 void success(int32_t cookie, int http_status, DictionaryIterator *dict, void *ctx) {
-    if (cookie != PBLINDEX_COOKIE)
-        return;
+    if (cookie != PBLINDEX_COOKIE) return;
+
+	text_layer_set_text(&textLayer[0][0], "xoxo");
+	text_layer_set_text(&textLayer[0][1], "yyyy");
+
+	Tuple *quotes = dict_find(dict, 0);
     for (int i=0; i<NUM_LINES; i++) {
-        Tuple *value = dict_find(dict, i);
-        if (value) {
-            static char str[2][NUM_LINES][16];
+		if (quotes) {
+			text_layer_set_text(&textLayer[0][2], "zzzz");
+		}
+////        if (value) {
+////            static char str[2][NUM_LINES][16];
 ////            strcpy(str[li][i], value->value->cstring);
 ////            text_layer_set_text(&textLayer[li][i], str[li][i]);
-        } else {
+////        } else {
 ////            text_layer_set_text(&textLayer[li][i], "-");
-        }
+////        }
     }
 }
 
@@ -112,8 +118,8 @@ void init_handler(AppContextRef ctx) {
         text_layer_set_text_alignment(&textLayer[1][i], GTextAlignmentRight);
     }
     
-    text_layer_set_text(&textLayer[0][0], "Antonio Stocks");
-    text_layer_set_text(&textLayer[0][1], "Antonio Asaro");
+    text_layer_set_text(&textLayer[0][0], "Stocks");
+    text_layer_set_text(&textLayer[0][1], "Antonio");
     text_layer_set_text(&textLayer[0][3], "loading...");
     
     for (int i=0; i<NUM_LINES; i++) {
