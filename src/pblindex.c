@@ -39,7 +39,7 @@ PBL_APP_INFO(HTTP_UUID,
              RESOURCE_ID_WATCH_MENU_ICON,
              APP_INFO_WATCH_FACE);   // Based off of "pbl-index" by "Edward Patel"
 
-#define NUM_LINES 5
+#define NUM_LINES 1
 #define COLUMN2_WIDTH 65
 
 // #error Set values below, should be different, one unique for each request
