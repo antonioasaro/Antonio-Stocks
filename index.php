@@ -35,9 +35,9 @@ $perc = $json_output->Data->ChangePercent;
 $date = $json_output->Data->Timestamp;
 
 $result = array();
-$result[0] = array('S', $symb);
-$result[1] = array('P', round($last, 2));
-$result[2] = array('C', round($perc, 2));
+$result[0] = array('1', $symb);
+$result[1] = array('2', round($last, 2));
+$result[2] = array('3', round($perc, 2));
 // $result[3] = array('TS', $date);
 
 print json_encode($result);
