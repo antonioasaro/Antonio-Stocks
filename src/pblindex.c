@@ -34,10 +34,10 @@
 #define MAKE_SCREENSHOT 0
 
 PBL_APP_INFO(HTTP_UUID,
-             "pbl-index", "Edward Patel",
+             "Antonio Stocks", "Antonio Asaro",
              1, 0,
              RESOURCE_ID_WATCH_MENU_ICON,
-             APP_INFO_WATCH_FACE);
+             APP_INFO_WATCH_FACE);   // Based off of "pbl-index" by "Edward Patel"
 
 #define NUM_LINES 5
 #define COLUMN2_WIDTH 65
