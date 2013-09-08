@@ -29,16 +29,15 @@ if (!$json_output) {
 	die();
 }
 
-$result = array();
 $symb = $json_output->Data->Symbol;
 $last = $json_output->Data->LastPrice;
 $perc = $json_output->Data->ChangePercent;
 $date = $json_output->Data->Timestamp;
 
-$result[0] = array('S', $symb);
-$result[1] = array('P', round($last, 2));
-$result[2] = array('C', round($perc, 2));
-// $result[3] = array('TS', $date);
+$result = array('1' => $symb,
+		'2' => round($last, 2) * 100,
+		'3' => round($perc, 2) * 100
+	);
 
 print json_encode($result);
 
