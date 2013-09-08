@@ -28,6 +28,7 @@
 
 #include "resource_ids.auto.h"
 
+#include "util.h"
 #include "http.h"
 #include "httpcapture.h"
 
@@ -63,9 +64,9 @@ void request_quotes() {
 //// #error Set URL below
     // http://nnnn/nnnn.names should return something like (not over 76 bytes)
     // {"0":"OMXS30","1":"Dow Jones","2":"Nasdaq","3":"DAX","4":"Nikkei"}
-//    if (http_out_get("http://antonio.comyr.com", false, PBLINDEX_COOKIE, &body) != HTTP_OK ||
+    if (http_out_get("http://antonio.comyr.com", false, PBLINDEX_COOKIE, &body) != HTTP_OK ||
 //    if (http_out_get("http://192.168.0.182/Pebble/Katharine-Weather", false, PBLINDEX_COOKIE, &body) != HTTP_OK ||
-    if (http_out_get("http://192.168.0.182/Pebble/Antonio-Stocks", false, PBLINDEX_COOKIE, &body) != HTTP_OK ||
+//    if (http_out_get("http://192.168.0.182/Pebble/Antonio-Stocks", false, PBLINDEX_COOKIE, &body) != HTTP_OK ||
         http_out_send() != HTTP_OK) {
         set_display_fail("QT fail()");
     }
@@ -85,14 +86,14 @@ void success(int32_t cookie, int http_status, DictionaryIterator *dict, void *ct
 	text_layer_set_text(&textLayer[0][1], "---------");
     text_layer_set_text(&textLayer[0][3], "");
 	
-	static char name[16];  
+	static char name[3][16];  
 	
-    for (int i=0; i<NUM_LINES; i++) {
-		Tuple *quotes = dict_find(dict,  i);
+    for (int i=0; i<3; i++) {
+		Tuple *quotes = dict_find(dict,  i+1);
 		if (quotes) {
 //			strcpy(name, quotes->value->cstring);
-			memcpy(name, itoa(quotes->value->data), 4);
-			text_layer_set_text(&textLayer[0][3], name);
+			memcpy(name[i], itoa(i), 4);
+			text_layer_set_text(&textLayer[0][i+2], name[i]);
 		}
 	}
 //    for (int i=0; i<NUM_LINES; i++) {
