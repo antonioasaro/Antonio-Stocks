@@ -63,30 +63,41 @@ void request_quotes() {
 //// #error Set URL below
     // http://nnnn/nnnn.names should return something like (not over 76 bytes)
     // {"0":"OMXS30","1":"Dow Jones","2":"Nasdaq","3":"DAX","4":"Nikkei"}
-    if (http_out_get("http://antonio.comyr.com", false, PBLINDEX_COOKIE, &body) != HTTP_OK ||
+//    if (http_out_get("http://antonio.comyr.com", false, PBLINDEX_COOKIE, &body) != HTTP_OK ||
+//    if (http_out_get("http://192.168.0.182/Pebble/Katharine-Weather", false, PBLINDEX_COOKIE, &body) != HTTP_OK ||
+    if (http_out_get("http://192.168.0.182/Pebble/Antonio-Stocks", false, PBLINDEX_COOKIE, &body) != HTTP_OK ||
         http_out_send() != HTTP_OK) {
-        set_display_fail("quotes ...");
+        set_display_fail("QT fail()");
     }
 }
 
 void failed(int32_t cookie, int http_status, void *ctx) {
     if (cookie == 0 ||
 		cookie == PBLINDEX_COOKIE) {
-        set_display_fail("failed()");
+        set_display_fail("BT fail()");
     }
 }
 
 void success(int32_t cookie, int http_status, DictionaryIterator *dict, void *ctx) {
     if (cookie != PBLINDEX_COOKIE) return;
 
-	text_layer_set_text(&textLayer[0][0], "xoxo");
-	text_layer_set_text(&textLayer[0][1], "yyyy");
-
-	Tuple *quotes = dict_find(dict, 0);
+	text_layer_set_text(&textLayer[0][0], "Success");
+	text_layer_set_text(&textLayer[0][1], "---------");
+    text_layer_set_text(&textLayer[0][3], "");
+	
+	static char name[16];  
+	
     for (int i=0; i<NUM_LINES; i++) {
+		Tuple *quotes = dict_find(dict,  i);
 		if (quotes) {
-			text_layer_set_text(&textLayer[0][2], "zzzz");
+//			strcpy(name, quotes->value->cstring);
+			memcpy(name, itoa(quotes->value->data), 4);
+			text_layer_set_text(&textLayer[0][3], name);
 		}
+	}
+//    for (int i=0; i<NUM_LINES; i++) {
+//		if (quotes) {
+//		}
 ////        if (value) {
 ////            static char str[2][NUM_LINES][16];
 ////            strcpy(str[li][i], value->value->cstring);
@@ -94,7 +105,7 @@ void success(int32_t cookie, int http_status, DictionaryIterator *dict, void *ct
 ////        } else {
 ////            text_layer_set_text(&textLayer[li][i], "-");
 ////        }
-    }
+//   }
 }
 
 void reconnect(void *ctx) {
@@ -119,7 +130,7 @@ void init_handler(AppContextRef ctx) {
     }
     
     text_layer_set_text(&textLayer[0][0], "Stocks");
-    text_layer_set_text(&textLayer[0][1], "Antonio");
+    text_layer_set_text(&textLayer[0][1], "by Antonio");
     text_layer_set_text(&textLayer[0][3], "loading...");
     
     for (int i=0; i<NUM_LINES; i++) {
