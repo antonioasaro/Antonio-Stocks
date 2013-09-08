@@ -64,9 +64,9 @@ void request_quotes() {
 //// #error Set URL below
     // http://nnnn/nnnn.names should return something like (not over 76 bytes)
     // {"0":"OMXS30","1":"Dow Jones","2":"Nasdaq","3":"DAX","4":"Nikkei"}
-//    if (http_out_get("http://antonio.comyr.com", false, PBLINDEX_COOKIE, &body) != HTTP_OK ||
+    if (http_out_get("http://antonio.comyr.com", false, PBLINDEX_COOKIE, &body) != HTTP_OK ||
 //    if (http_out_get("http://192.168.0.182/Pebble/Katharine-Weather", false, PBLINDEX_COOKIE, &body) != HTTP_OK ||
-    if (http_out_get("http://192.168.0.182/Pebble/Antonio-Stocks", false, PBLINDEX_COOKIE, &body) != HTTP_OK ||
+//    if (http_out_get("http://192.168.0.182/Pebble/Antonio-Stocks", false, PBLINDEX_COOKIE, &body) != HTTP_OK ||
         http_out_send() != HTTP_OK) {
         set_display_fail("QT fail()");
     }
@@ -82,7 +82,7 @@ void failed(int32_t cookie, int http_status, void *ctx) {
 void success(int32_t cookie, int http_status, DictionaryIterator *dict, void *ctx) {
     if (cookie != PBLINDEX_COOKIE) return;
 
-	text_layer_set_text(&textLayer[0][0], "Local - success!!!!");
+	text_layer_set_text(&textLayer[0][0], "Remote - success!!!!");
 	text_layer_set_text(&textLayer[0][1], "");
     text_layer_set_text(&textLayer[0][3], "");
 	
