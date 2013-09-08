@@ -34,10 +34,10 @@ $last = $json_output->Data->LastPrice;
 $perc = $json_output->Data->ChangePercent;
 $date = $json_output->Data->Timestamp;
 
-$result = array('1' => $symb,
-		'2' => round($last, 2) * 100,
-		'3' => round($perc, 2) * 100
-	);
+$result = array();
+$result[1] = $symb;
+$result[2] = array('I', round($last, 2) * 100);
+$result[3] = array('I', round($perc, 2) * 100);
 
 print json_encode($result);
 
