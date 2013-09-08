@@ -64,9 +64,9 @@ void request_quotes() {
 //// #error Set URL below
     // http://nnnn/nnnn.names should return something like (not over 76 bytes)
     // {"0":"OMXS30","1":"Dow Jones","2":"Nasdaq","3":"DAX","4":"Nikkei"}
-    if (http_out_get("http://antonio.comyr.com", false, PBLINDEX_COOKIE, &body) != HTTP_OK ||
+//    if (http_out_get("http://antonio.comyr.com", false, PBLINDEX_COOKIE, &body) != HTTP_OK ||
 //    if (http_out_get("http://192.168.0.182/Pebble/Katharine-Weather", false, PBLINDEX_COOKIE, &body) != HTTP_OK ||
-//    if (http_out_get("http://192.168.0.182/Pebble/Antonio-Stocks", false, PBLINDEX_COOKIE, &body) != HTTP_OK ||
+    if (http_out_get("http://192.168.0.182/Pebble/Antonio-Stocks", false, PBLINDEX_COOKIE, &body) != HTTP_OK ||
         http_out_send() != HTTP_OK) {
         set_display_fail("QT fail()");
     }
@@ -82,31 +82,19 @@ void failed(int32_t cookie, int http_status, void *ctx) {
 void success(int32_t cookie, int http_status, DictionaryIterator *dict, void *ctx) {
     if (cookie != PBLINDEX_COOKIE) return;
 
-	text_layer_set_text(&textLayer[0][0], "Success");
-	text_layer_set_text(&textLayer[0][1], "---------");
+	text_layer_set_text(&textLayer[0][0], "Success!!!!");
+	text_layer_set_text(&textLayer[0][1], "");
     text_layer_set_text(&textLayer[0][3], "");
 	
 	static char name[3][16];  
-	
     for (int i=0; i<3; i++) {
 		Tuple *quotes = dict_find(dict,  i+1);
 		if (quotes) {
-//			strcpy(name, quotes->value->cstring);
-			memcpy(name[i], itoa(i), 4);
+			if (i==0) { memcpy(name[i], quotes->value->cstring, quotes->length); 
+			} else {	memcpy(name[i], itoa(quotes->value->int32), 4);}	
 			text_layer_set_text(&textLayer[0][i+2], name[i]);
 		}
 	}
-//    for (int i=0; i<NUM_LINES; i++) {
-//		if (quotes) {
-//		}
-////        if (value) {
-////            static char str[2][NUM_LINES][16];
-////            strcpy(str[li][i], value->value->cstring);
-////            text_layer_set_text(&textLayer[li][i], str[li][i]);
-////        } else {
-////            text_layer_set_text(&textLayer[li][i], "-");
-////        }
-//   }
 }
 
 void reconnect(void *ctx) {
