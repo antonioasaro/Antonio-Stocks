@@ -8,7 +8,6 @@ $quotes = array_merge($quotes, process_quotes($quote));
 
 $stock = $_GET['stock2'];
 $quote = curl_get('http://dev.markitondemand.com/Api/Quote/json?symbol='.$stock);
-$quotes = array_merge($quotes, process_quotes($quote));
 
 $stock = $_GET['stock3'];
 $quote = curl_get('http://dev.markitondemand.com/Api/Quote/json?symbol='.$stock);
