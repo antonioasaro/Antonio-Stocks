@@ -4,15 +4,12 @@ if (!isset($_GET['stock1']) || !isset($_GET['stock2']) || !isset($_GET['stock3']
 
 $stock1 = $_GET['stock1'];
 $stock2 = $_GET['stock2'];
-$stock3 = $_GET['stock3'];
 
 $json1  = curl_get('http://dev.markitondemand.com/Api/Quote/json?symbol='.$stock1);
 $json2  = curl_get('http://dev.markitondemand.com/Api/Quote/json?symbol='.$stock2);
-$json3  = curl_get('http://dev.markitondemand.com/Api/Quote/json?symbol='.$stock3);
 
 $quote1 = process_quotes($json1, 1+0*3);
 $quote2 = process_quotes($json2, 1+1*3);
-$quote3 = process_quotes($json3, 1+2*3);
 
 print json_encode($quote1 + $quote2 + $quote3);
 
