@@ -59,15 +59,10 @@ void set_display_fail(char *text) {
         text_layer_set_text(&textLayer[1][i], "");
 }
 
+// Stock List is in the form ?stock1=name1& ... Must have 3 names!!
 void request_quotes() {
     DictionaryIterator *body;
-//// #error Set URL below
-    // http://nnnn/nnnn.names should return something like (not over 76 bytes)
-    // {"0":"OMXS30","1":"Dow Jones","2":"Nasdaq","3":"DAX","4":"Nikkei"}
-//    if (http_out_get("http://jugaar.com/antonio", false, PBLINDEX_COOKIE, &body) != HTTP_OK ||
-    if (http_out_get("http://antonioasaro.site50.net", false, PBLINDEX_COOKIE, &body) != HTTP_OK ||
-//    if (http_out_get("http://192.168.0.182/Pebble/Katharine-Weather", false, PBLINDEX_COOKIE, &body) != HTTP_OK ||
-//    if (http_out_get("http://192.168.0.182/Pebble/Antonio-Stocks", false, PBLINDEX_COOKIE, &body) != HTTP_OK ||
+    if (http_out_get("http://antonioasaro.site50.net/?stock1=AMD&stock2=INTC", false, PBLINDEX_COOKIE, &body) != HTTP_OK ||
         http_out_send() != HTTP_OK) {
         set_display_fail("QT fail()");
     }
@@ -87,16 +82,20 @@ void success(int32_t cookie, int http_status, DictionaryIterator *dict, void *ct
 	text_layer_set_text(&textLayer[0][1], "");
     text_layer_set_text(&textLayer[0][3], "");
 	
-	static char name[3][16];  
-    for (int i=0; i<3; i++) {
+	static char name0[3][16];  
+	static char name1[3][16];  
+    for (int i=0; i<3+3; i++) {
 		Tuple *quotes = dict_find(dict,  i+1);
 		if (quotes) {
-			if (i==0) { memcpy(name[i], quotes->value->cstring, quotes->length); 
-			} else {	memcpy(name[i], itoa(quotes->value->int32), 4);}	
-			text_layer_set_text(&textLayer[0][i+2], name[i]);
+			if (i==0)  			  memcpy(name0[i-0], quotes->value->cstring, quotes->length); 
+			if ((i==1) || (i==2)) memcpy(name0[i-0], itoa(quotes->value->int32), 4);	
+			if (i==3)             memcpy(name1[i-3], quotes->value->cstring, quotes->length); 
+			if ((i==4) || (i==5)) memcpy(name1[i-3], itoa(quotes->value->int32), 4);	
+			if (i<3) text_layer_set_text(&textLayer[0][i+2], name0[i-0]);
+			if (i>2) text_layer_set_text(&textLayer[1][i-1], name1[i-3]);
 		}
 	}
-         light_enable_interaction();
+    light_enable_interaction();
 }
 
 void reconnect(void *ctx) {
