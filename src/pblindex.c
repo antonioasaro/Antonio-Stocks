@@ -48,18 +48,19 @@ PBL_APP_INFO(HTTP_UUID,
 //// #define PBLINDEX_VALUES_COOKIE some-unique-value
 
 Window window;
-TextLayer textLayer[2][NUM_LINES];
+TextLayer textLayer[3][NUM_LINES];
 
 void set_display_fail(char *text) {
     text_layer_set_text(&textLayer[0][0], "Failed");
     text_layer_set_text(&textLayer[0][1], text);
-    for (int i=2; i<NUM_LINES; i++)
-        text_layer_set_text(&textLayer[0][i], "");
-    for (int i=0; i<NUM_LINES; i++)
+	for (int i=0; i<NUM_LINES; i++) {
+		if (i>1) text_layer_set_text(&textLayer[0][i], "");
         text_layer_set_text(&textLayer[1][i], "");
+        text_layer_set_text(&textLayer[2][i], "");
+	}
 }
 
-// Stock List is in the form ?stock1=name1& ... Must have 3 names!!
+// Stock List is in the form ?stock1=name1& ... Must have 2 names!!
 void request_quotes() {
     DictionaryIterator *body;
     if (http_out_get("http://antonioasaro.site50.net/?stock1=AMD&stock2=INTC", false, PBLINDEX_COOKIE, &body) != HTTP_OK ||
@@ -77,22 +78,22 @@ void failed(int32_t cookie, int http_status, void *ctx) {
 
 void success(int32_t cookie, int http_status, DictionaryIterator *dict, void *ctx) {
     if (cookie != PBLINDEX_COOKIE) return;
-
-	text_layer_set_text(&textLayer[0][0], "Success!!!!");
+	text_layer_set_text(&textLayer[0][0], "Success!!");
 	text_layer_set_text(&textLayer[0][1], "");
-    text_layer_set_text(&textLayer[0][3], "");
-	
-	static char name0[3][16];  
-	static char name1[3][16];  
+
+	static char stock1[3][16];  
+	static char stock2[3][16];  
     for (int i=0; i<3+3; i++) {
 		Tuple *quotes = dict_find(dict,  i+1);
 		if (quotes) {
-			if (i==0)  			  memcpy(name0[i-0], quotes->value->cstring, quotes->length); 
-			if ((i==1) || (i==2)) memcpy(name0[i-0], itoa(quotes->value->int32), 4);	
-			if (i==3)             memcpy(name1[i-3], quotes->value->cstring, quotes->length); 
-			if ((i==4) || (i==5)) memcpy(name1[i-3], itoa(quotes->value->int32), 4);	
-			if (i<3) text_layer_set_text(&textLayer[0][i+2], name0[i-0]);
-			if (i>2) text_layer_set_text(&textLayer[1][i-1], name1[i-3]);
+			if (i==0) memcpy(stock1[i-0], quotes->value->cstring, quotes->length); 
+			if (i==1) memcpy(stock1[i-0], itoa(quotes->value->int32), 4);	
+			if (i==2) memcpy(stock1[i-0], itoa(quotes->value->int32), 4);	
+			if (i==3) memcpy(stock2[i-3], quotes->value->cstring, quotes->length); 
+			if (i==4) memcpy(stock2[i-3], itoa(quotes->value->int32), 4);	
+			if (i==5) memcpy(stock2[i-3], itoa(quotes->value->int32), 4);	
+			if (i<3) text_layer_set_text(&textLayer[i-0][2], stock1[i-0]);
+			if (i>2) text_layer_set_text(&textLayer[i-3][3], stock2[i-3]);
 		}
 	}
     light_enable_interaction();
@@ -108,28 +109,29 @@ void init_handler(AppContextRef ctx) {
     window_stack_push(&window, true);
     
     for (int i=0; i<NUM_LINES; i++) {
-        text_layer_init(&textLayer[0][i], GRect(5, 7+i*30, 144-5-COLUMN2_WIDTH, 30));
-        text_layer_init(&textLayer[1][i], GRect(144-COLUMN2_WIDTH, 7+i*30, COLUMN2_WIDTH, 30));
+        if (i<2) text_layer_init(&textLayer[0][i], GRect(5+00, 7+i*30, 135, 30));
+        if (i>1) text_layer_init(&textLayer[0][i], GRect(5+00, 7+i*30, 45, 30));
+        text_layer_init(&textLayer[1][i], GRect(5+45, 7+i*30, 45, 30));
+        text_layer_init(&textLayer[2][i], GRect(5+90, 7+i*30, 45, 30));
         text_layer_set_font(&textLayer[0][i], fonts_get_system_font(FONT_KEY_GOTHIC_24));
         text_layer_set_font(&textLayer[1][i], fonts_get_system_font(FONT_KEY_GOTHIC_24));
+        text_layer_set_font(&textLayer[2][i], fonts_get_system_font(FONT_KEY_GOTHIC_24));
         text_layer_set_background_color(&textLayer[0][i], GColorBlack);
         text_layer_set_background_color(&textLayer[1][i], GColorBlack);
+        text_layer_set_background_color(&textLayer[2][i], GColorBlack);
         text_layer_set_text_color(&textLayer[0][i], GColorWhite);
         text_layer_set_text_color(&textLayer[1][i], GColorWhite);
-        text_layer_set_text_alignment(&textLayer[1][i], GTextAlignmentRight);
-    }
-    
-    text_layer_set_text(&textLayer[0][0], "Stocks");
-    text_layer_set_text(&textLayer[0][1], "by Antonio");
-    text_layer_set_text(&textLayer[0][3], "loading...");
-    
-    for (int i=0; i<NUM_LINES; i++) {
+        text_layer_set_text_color(&textLayer[2][i], GColorWhite);
+        text_layer_set_text_alignment(&textLayer[1][i], GTextAlignmentCenter);
+        text_layer_set_text_alignment(&textLayer[2][i], GTextAlignmentRight);
         layer_add_child(&window.layer, &textLayer[0][i].layer);
-        layer_add_child(&window.layer, &textLayer[1][i].layer);
+        if (i>1) layer_add_child(&window.layer, &textLayer[1][i].layer);
+        if (i>1) layer_add_child(&window.layer, &textLayer[2][i].layer);
     }
+	text_layer_set_text(&textLayer[0][0], "Antonio Stocks");
+	text_layer_set_text(&textLayer[0][1], "loading ...");
     
-    http_set_app_id(PBLINDEX_COOKIE);
-    
+    http_set_app_id(PBLINDEX_COOKIE); 
     http_register_callbacks((HTTPCallbacks){
         .failure = failed,
         .success = success,
