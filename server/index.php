@@ -43,7 +43,7 @@ function process_quotes($quote, $i) {
     $result = array();
     $result[$i+0] = $symb;
     $result[$i+1] = array('I', round($last, 2) * 100);
-    $result[$i+2] = array('I', round($perc, 2) * 100);
+    $result[$i+2] = array('I', round($perc, 1) * 10);
     return $result;
 }
 
