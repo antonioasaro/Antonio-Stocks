@@ -60,6 +60,20 @@ void set_display_fail(char *text) {
 	}
 }
 
+char *ftoa(int i, bool j)
+{
+  	static char buf[8];
+	
+	strcpy(buf, "");
+	if (!j) strcat(buf, "$");
+	if (i<0) { i = -i; strcat(buf, "-"); }
+	if (!j) strcat(buf, itoa(i/100)); else strcat(buf, itoa(i/10));
+	strcat(buf, ".");
+	if (!j) strcat(buf, itoa(i%100)); else strcat(buf, itoa(i%10));
+	if (j) strcat(buf, "%");
+    return(buf);
+}
+
 // Stock List is in the form ?stock1=name1& ... Must have 2 names!!
 void request_quotes() {
     DictionaryIterator *body;
@@ -87,11 +101,11 @@ void success(int32_t cookie, int http_status, DictionaryIterator *dict, void *ct
 		Tuple *quotes = dict_find(dict,  i+1);
 		if (quotes) {
 			if (i==0) memcpy(stock1[i-0], quotes->value->cstring, quotes->length); 
-			if (i==1) memcpy(stock1[i-0], itoa(quotes->value->int32), 4);	
-			if (i==2) memcpy(stock1[i-0], itoa(quotes->value->int32), 4);	
+			if (i==1) memcpy(stock1[i-0], ftoa(quotes->value->int32, 0), 8);	
+			if (i==2) memcpy(stock1[i-0], ftoa(quotes->value->int32, 1), 8);	
 			if (i==3) memcpy(stock2[i-3], quotes->value->cstring, quotes->length); 
-			if (i==4) memcpy(stock2[i-3], itoa(quotes->value->int32), 4);	
-			if (i==5) memcpy(stock2[i-3], itoa(quotes->value->int32), 4);	
+			if (i==4) memcpy(stock2[i-3], ftoa(quotes->value->int32, 0), 8);	
+			if (i==5) memcpy(stock2[i-3], ftoa(quotes->value->int32, 1), 8);	
 			if (i<3) text_layer_set_text(&textLayer[i-0][2], stock1[i-0]);
 			if (i>2) text_layer_set_text(&textLayer[i-3][3], stock2[i-3]);
 		}
@@ -122,7 +136,7 @@ void init_handler(AppContextRef ctx) {
         text_layer_set_text_color(&textLayer[0][i], GColorWhite);
         text_layer_set_text_color(&textLayer[1][i], GColorWhite);
         text_layer_set_text_color(&textLayer[2][i], GColorWhite);
-        text_layer_set_text_alignment(&textLayer[1][i], GTextAlignmentCenter);
+        text_layer_set_text_alignment(&textLayer[1][i], GTextAlignmentLeft);
         text_layer_set_text_alignment(&textLayer[2][i], GTextAlignmentRight);
         layer_add_child(&window.layer, &textLayer[0][i].layer);
         if (i>1) layer_add_child(&window.layer, &textLayer[1][i].layer);
